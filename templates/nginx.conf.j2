@@ -89,13 +89,6 @@ log_format  main  '$remote_addr - $remote_user [$time_local] '
                   '"$http_referer" "$http_user_agent" "-" '
                   '$request_time';
 
-
-
-# Load config files from the /etc/nginx/conf.d/ directory
-include /etc/nginx/conf.d/*.conf;
-
-
-
 index   index.html index.htm;
 
 # Keep it for ELB health check

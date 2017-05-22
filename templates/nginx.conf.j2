@@ -78,16 +78,7 @@ client_header_buffer_size    {{ nginx_client_header_buffer_size | default('1k') 
 client_max_body_size         {{ nginx_client_max_body_size | default('1m') }};
 large_client_header_buffers  {{ nginx_large_client_header_buffers_number | default(4) }} {{ nginx_large_client_header_buffers_size | default('8k') }};
 
-# NCSA combined log format + request_time
-{% if behind_load_balance is defined and behind_load_balance -%}
-log_format  main  '$http_x_forwarded_for - $remote_user [$time_local] '
-{%- else -%}
-log_format  main  '$remote_addr - $remote_user [$time_local] '
-{%- endif %}
 
-                  '"$request" $status $body_bytes_sent '
-                  '"$http_referer" "$http_user_agent" "-" '
-                  '$request_time';
 
 index   index.html index.htm;
 

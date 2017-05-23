@@ -70,36 +70,33 @@ server {
 }
 
 
-# please refer to the official document: http://wiki.nginx.org/HttpCoreModule#client_body_buffer_size
-# also some blogs about it: http://www.cyberciti.biz/tips/linux-unix-bsd-nginx-webserver-security.html
-# https://www.digitalocean.com/community/tutorials/how-to-optimize-nginx-configuration
-client_body_buffer_size      {{ nginx_client_body_buffer_size | default('8k') }};
-client_header_buffer_size    {{ nginx_client_header_buffer_size | default('1k') }};
-client_max_body_size         {{ nginx_client_max_body_size | default('1m') }};
-large_client_header_buffers  {{ nginx_large_client_header_buffers_number | default(4) }} {{ nginx_large_client_header_buffers_size | default('8k') }};
+{% if application_name == 'image-processor' %}
+    client_body_buffer_size      {{ nginx_client_body_buffer_size | default('8k') }};
+    client_header_buffer_size    {{ nginx_client_header_buffer_size | default('1k') }};
+    client_max_body_size         {{ nginx_client_max_body_size | default('1m') }};
+    large_client_header_buffers  {{ nginx_large_client_header_buffers_number | default(4) }} {{ nginx_large_client_header_buffers_size | default('8k') }};
 
+    index   index.html index.htm;
 
+    # Keep it for ELB health check
+    server {
+        listen       80;
+        server_name  localhost;
+        root         /usr/share/nginx/html;
 
-index   index.html index.htm;
+        location / {
+        }
 
-# Keep it for ELB health check
-server {
-    listen       80;
-    server_name  localhost;
-    root         /usr/share/nginx/html;
+        # redirect server error pages to the static page /40x.html
+        #
+        error_page 404 /404.html;
+        location = /40x.html {
+        }
 
-    location / {
+        # redirect server error pages to the static page /50x.html
+        #
+        error_page 500 502 503 504 /50x.html;
+        location = /50x.html {
+        }
     }
-
-    # redirect server error pages to the static page /40x.html
-    #
-    error_page 404 /404.html;
-    location = /40x.html {
-    }
-
-    # redirect server error pages to the static page /50x.html
-    #
-    error_page 500 502 503 504 /50x.html;
-    location = /50x.html {
-    }
-}
+{% endif %}

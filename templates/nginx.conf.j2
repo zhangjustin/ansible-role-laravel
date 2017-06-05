@@ -70,14 +70,14 @@ server {
 }
 
 
-{% if application_name == 'image-processor' %}
+{% if nginx_client_setting if defined and nginx_client_setting %}
     client_body_buffer_size      {{ nginx_client_body_buffer_size | default('8k') }};
     client_header_buffer_size    {{ nginx_client_header_buffer_size | default('1k') }};
     client_max_body_size         {{ nginx_client_max_body_size | default('1m') }};
     large_client_header_buffers  {{ nginx_large_client_header_buffers_number | default(4) }} {{ nginx_large_client_header_buffers_size | default('8k') }};
+{% endif %}
 
-    index   index.html index.htm;
-
+{% if elb_server is defined and nginx_client_setting %}
     # Keep it for ELB health check
     server {
         listen       80;
